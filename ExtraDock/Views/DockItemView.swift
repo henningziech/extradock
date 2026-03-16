@@ -64,7 +64,7 @@ struct DockItemView: View {
     private func handleRightClick() {
         if item.bundleIdentifier != nil {
             // Build native dock menu and show it at click position
-            if let menu = DockMenuProxy.buildNativeMenu(forAppNamed: item.name) {
+            if let menu = DockMenuProxy.shared.buildMenu(forAppNamed: item.name) {
                 let mouseLocation = NSEvent.mouseLocation
                 // Find the window at the mouse position to show menu in
                 if let window = NSApp.windows.first(where: { $0.frame.contains(mouseLocation) }) {
