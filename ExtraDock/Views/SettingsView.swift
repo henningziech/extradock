@@ -9,7 +9,7 @@ private struct ScreenEntry: Identifiable {
 
 struct SettingsView: View {
     var screenMonitor: ScreenMonitor
-    @State private var tileSizeOverride: Double? = UserDefaults.standard.object(forKey: "tileSizeOverride") as? Double
+    @State private var dockScale: Double = (UserDefaults.standard.object(forKey: "dockScale") as? Double) ?? 1.0
     @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
     @State private var autoHideEnabled: Bool = UserDefaults.standard.bool(forKey: "autoHideEnabled")
     @State private var autoHideSeconds: Double = (UserDefaults.standard.object(forKey: "autoHideSeconds") as? Double) ?? 5.0
@@ -34,29 +34,12 @@ struct SettingsView: View {
             }
 
             Section("Appearance") {
-                Toggle("Override tile size", isOn: Binding(
-                    get: { tileSizeOverride != nil },
-                    set: { enabled in
-                        if enabled {
-                            tileSizeOverride = 49
-                            UserDefaults.standard.set(49, forKey: "tileSizeOverride")
-                        } else {
-                            tileSizeOverride = nil
-                            UserDefaults.standard.removeObject(forKey: "tileSizeOverride")
-                        }
-                    }
-                ))
-
-                if let size = tileSizeOverride {
-                    Slider(value: Binding(
-                        get: { size },
-                        set: { newValue in
-                            tileSizeOverride = newValue
-                            UserDefaults.standard.set(newValue, forKey: "tileSizeOverride")
-                        }
-                    ), in: 32...80, step: 1) {
-                        Text("Tile size: \(Int(size))")
-                    }
+                Slider(value: $dockScale, in: 0.5...2.0, step: 0.1) {
+                    Text("Scale: \(Int(dockScale * 100))%")
+                }
+                .onChange(of: dockScale) { _, newValue in
+                    UserDefaults.standard.set(newValue, forKey: "dockScale")
+                    NotificationCenter.default.post(name: .extraDockScaleChanged, object: nil)
                 }
             }
 
@@ -109,4 +92,5 @@ struct SettingsView: View {
 
 extension Notification.Name {
     static let extraDockAutoHideChanged = Notification.Name("extraDockAutoHideChanged")
+    static let extraDockScaleChanged = Notification.Name("extraDockScaleChanged")
 }

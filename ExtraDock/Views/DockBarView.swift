@@ -3,38 +3,39 @@ import SwiftUI
 struct DockBarView: View {
     var dockState: DockState
 
+    private var scaledTileSize: CGFloat {
+        let scale = CGFloat(UserDefaults.standard.object(forKey: "dockScale") as? Double ?? 1.0)
+        return dockState.tileSize * scale
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             let grouped = groupedItems()
+            let size = scaledTileSize
 
-            // Pinned apps
             if !grouped.pinned.isEmpty {
                 ForEach(grouped.pinned) { item in
-                    DockItemView(item: item, tileSize: dockState.tileSize)
+                    DockItemView(item: item, tileSize: size)
                 }
             }
 
-            // Separator between pinned and recent/others
             if !grouped.pinned.isEmpty && (!grouped.recent.isEmpty || !grouped.others.isEmpty) {
-                DockSeparatorView(height: dockState.tileSize)
+                DockSeparatorView(height: size)
             }
 
-            // Recent apps
             if !grouped.recent.isEmpty {
                 ForEach(grouped.recent) { item in
-                    DockItemView(item: item, tileSize: dockState.tileSize)
+                    DockItemView(item: item, tileSize: size)
                 }
             }
 
-            // Separator between recent and others
             if !grouped.recent.isEmpty && !grouped.others.isEmpty {
-                DockSeparatorView(height: dockState.tileSize)
+                DockSeparatorView(height: size)
             }
 
-            // Persistent others (folders)
             if !grouped.others.isEmpty {
                 ForEach(grouped.others) { item in
-                    DockItemView(item: item, tileSize: dockState.tileSize)
+                    DockItemView(item: item, tileSize: size)
                 }
             }
         }

@@ -88,6 +88,11 @@ class MirrorDockPanel: NSPanel {
         ) { [weak self] _ in
             self?.autoHideSettingChanged()
         }
+        NotificationCenter.default.addObserver(
+            forName: .extraDockScaleChanged, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.updatePosition()
+        }
         orderFront(nil)
     }
 
@@ -99,11 +104,12 @@ class MirrorDockPanel: NSPanel {
         guard let resolvedScreen else { return }
         self.targetScreen = resolvedScreen
 
-        let tileSize = dockState.tileSize
+        let scale = CGFloat(UserDefaults.standard.object(forKey: "dockScale") as? Double ?? 1.0)
+        let tileSize = dockState.tileSize * scale
         let itemCount = CGFloat(dockState.items.count)
         let separatorCount: CGFloat = 2
-        let padding: CGFloat = 16
-        let separatorWidth: CGFloat = 12
+        let padding: CGFloat = 16 * scale
+        let separatorWidth: CGFloat = 12 * scale
 
         let width = itemCount * tileSize + separatorCount * separatorWidth + padding * 2
         let height = tileSize + padding
