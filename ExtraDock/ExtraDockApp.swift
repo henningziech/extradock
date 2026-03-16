@@ -3,24 +3,19 @@ import SwiftUI
 
 @main
 struct ExtraDockApp: App {
-    @State private var dockState = DockState()
-    @State private var screenMonitor: ScreenMonitor?
-    @State private var plistWatcher: PlistFileWatcher?
-    @State private var runningAppsMonitor: RunningAppsMonitor?
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
         MenuBarExtra("ExtraDock", systemImage: "dock.rectangle") {
             Button("Settings...") {
-                NSApp.activate(ignoringOtherApps: true)
-                // Open settings window by sending the showPreferencesWindow: action
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                appDelegate.openSettings()
             }
             .keyboardShortcut(",", modifiers: .command)
 
             Divider()
 
             Button("Refresh Dock") {
-                reloadDock()
+                appDelegate.reloadDock()
             }
 
             Divider()
@@ -30,59 +25,77 @@ struct ExtraDockApp: App {
             }
             .keyboardShortcut("q", modifiers: .command)
         }
-
-        Settings {
-            if let monitor = screenMonitor {
-                SettingsView(screenMonitor: monitor)
-            } else {
-                ProgressView("Loading...")
-            }
-        }
     }
+}
 
-    init() {
+// MARK: - AppDelegate
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var dockState = DockState()
+    var screenMonitor: ScreenMonitor!
+    var plistWatcher: PlistFileWatcher!
+    var runningAppsMonitor: RunningAppsMonitor!
+    private var settingsWindow: NSWindow?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
         // Initial dock read
         let result = DockConfigReader.parse()
-        let state = DockState()
-        state.items = result.items
-        state.tileSize = result.tileSize
-        state.orientation = result.orientation
-        _dockState = State(initialValue: state)
+        dockState.items = result.items
+        dockState.tileSize = result.tileSize
+        dockState.orientation = result.orientation
 
         // Set up screen monitor
-        let monitor = ScreenMonitor(dockState: state)
-        _screenMonitor = State(initialValue: monitor)
+        screenMonitor = ScreenMonitor(dockState: dockState)
 
         // Set up plist watcher
-        let watcher = PlistFileWatcher()
-        watcher.onChange = { [state, monitor] in
+        plistWatcher = PlistFileWatcher()
+        plistWatcher.onChange = { [weak self] in
+            guard let self else { return }
             let newResult = DockConfigReader.parse()
-            state.updateItems(newResult.items)
-            state.tileSize = UserDefaults.standard.object(forKey: "tileSizeOverride") as? CGFloat ?? newResult.tileSize
-            state.orientation = newResult.orientation
-            // Reposition panels after item count may have changed
-            for (_, panel) in monitor.panels {
+            self.dockState.updateItems(newResult.items)
+            self.dockState.tileSize = UserDefaults.standard.object(forKey: "tileSizeOverride") as? CGFloat ?? newResult.tileSize
+            self.dockState.orientation = newResult.orientation
+            for (_, panel) in self.screenMonitor.panels {
                 panel.updatePosition()
             }
         }
-        _plistWatcher = State(initialValue: watcher)
 
         // Set up running apps monitor
-        let appsMon = RunningAppsMonitor()
-        appsMon.onChange = { [state] bundleIDs in
-            state.updateRunningApps(bundleIDs)
+        runningAppsMonitor = RunningAppsMonitor()
+        runningAppsMonitor.onChange = { [weak self] bundleIDs in
+            self?.dockState.updateRunningApps(bundleIDs)
         }
-        _runningAppsMonitor = State(initialValue: appsMon)
 
         // Apply initial running state
-        state.updateRunningApps(appsMon.runningBundleIDs)
+        dockState.updateRunningApps(runningAppsMonitor.runningBundleIDs)
     }
 
-    private func reloadDock() {
+    func reloadDock() {
         let result = DockConfigReader.parse()
         dockState.updateItems(result.items)
         dockState.tileSize = UserDefaults.standard.object(forKey: "tileSizeOverride") as? CGFloat ?? result.tileSize
         dockState.orientation = result.orientation
-        screenMonitor?.refreshPanels()
+        screenMonitor.refreshPanels()
+    }
+
+    func openSettings() {
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let settingsView = SettingsView(screenMonitor: screenMonitor)
+        let hostingController = NSHostingController(rootView: settingsView)
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "ExtraDock Settings"
+        window.styleMask = [.titled, .closable]
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        window.isReleasedWhenClosed = false
+        NSApp.activate(ignoringOtherApps: true)
+
+        self.settingsWindow = window
     }
 }
