@@ -8,17 +8,28 @@ class BadgeReader {
     private(set) var badges: [String: String] = [:]
     private(set) var isAccessibilityGranted = false
     private var pollTimer: Timer?
+    private var permissionTimer: Timer?
     var onChange: (([String: String]) -> Void)?
 
     init() {
-        isAccessibilityGranted = AXIsProcessTrusted()
-        if isAccessibilityGranted {
-            startPolling()
-        }
+        // Don't check trust here — do it after app is fully launched
     }
 
     deinit {
         pollTimer?.invalidate()
+        permissionTimer?.invalidate()
+    }
+
+    /// Call after app launch to start badge reading
+    func start() {
+        let trusted = AXIsProcessTrusted()
+        isAccessibilityGranted = trusted
+
+        if trusted {
+            startPolling()
+        } else {
+            requestPermission()
+        }
     }
 
     /// Request accessibility permission (shows system prompt if not yet granted)
@@ -26,11 +37,12 @@ class BadgeReader {
         let opts = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true] as CFDictionary
         let trusted = AXIsProcessTrustedWithOptions(opts)
         isAccessibilityGranted = trusted
+
         if trusted {
             startPolling()
         } else {
             // Poll for permission grant (user may grant it in System Settings)
-            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] timer in
+            permissionTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] timer in
                 if AXIsProcessTrusted() {
                     timer.invalidate()
                     self?.isAccessibilityGranted = true
@@ -65,12 +77,12 @@ class BadgeReader {
 
         // Get children of Dock app
         var childrenRef: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(dockElement, kAXChildrenAttribute as CFString, &childrenRef) == .success,
-              let children = childrenRef as? [AXUIElement] else {
+        let result = AXUIElementCopyAttributeValue(dockElement, kAXChildrenAttribute as CFString, &childrenRef)
+        guard result == .success, let children = childrenRef as? [AXUIElement] else {
             return [:]
         }
 
-        var result: [String: String] = [:]
+        var badges: [String: String] = [:]
 
         for child in children {
             // Look for AXList (the dock item list)
@@ -93,11 +105,11 @@ class BadgeReader {
                 var statusRef: CFTypeRef?
                 AXUIElementCopyAttributeValue(item, "AXStatusLabel" as CFString, &statusRef)
                 if let status = statusRef as? String, !status.isEmpty {
-                    result[title] = status
+                    badges[title] = status
                 }
             }
         }
 
-        return result
+        return badges
     }
 }

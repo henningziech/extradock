@@ -75,10 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         badgeReader.onChange = { [weak self] badges in
             self?.dockState.updateBadges(badges)
         }
-        // Request accessibility permission if not already granted
-        if !badgeReader.isAccessibilityGranted {
-            badgeReader.requestPermission()
-        }
+        badgeReader.start()
     }
 
     func reloadDock() {

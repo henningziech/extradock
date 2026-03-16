@@ -48,18 +48,6 @@ class ScreenMonitor {
         let currentScreens = NSScreen.screens
         let currentIDs = Set(currentScreens.compactMap { ScreenMonitor.displayID(for: $0) })
 
-        // Debug: log screen info to file
-        var debugLog = ""
-        let dockScreenID = NSScreen.screens.first.flatMap { ScreenMonitor.displayID(for: $0) }
-        debugLog += "dockScreenID (screens[0]): \(dockScreenID.map(String.init) ?? "nil")\n"
-        debugLog += "enabledScreens stored: \(UserDefaults.standard.dictionary(forKey: "enabledScreens") ?? [:])\n"
-        for (i, screen) in currentScreens.enumerated() {
-            let did = ScreenMonitor.displayID(for: screen)
-            let enabled = did.map { isEnabled($0) } ?? false
-            debugLog += "Screen \(i): \(screen.localizedName), displayID=\(did.map(String.init) ?? "nil"), enabled=\(enabled), frame=\(screen.frame)\n"
-        }
-        try? debugLog.write(toFile: NSHomeDirectory() + "/extradock/debug.log", atomically: true, encoding: .utf8)
-
         // Remove panels for disconnected screens
         for id in panels.keys where !currentIDs.contains(id) {
             panels[id]?.close()
@@ -78,7 +66,6 @@ class ScreenMonitor {
                     // New enabled screen — create a panel
                     let panel = MirrorDockPanel(screen: screen, dockState: dockState)
                     panels[displayID] = panel
-                    print("[ExtraDock] Created panel on \(screen.localizedName) (displayID=\(displayID))")
                 }
             } else {
                 // Screen disabled — close any existing panel
