@@ -58,15 +58,15 @@ struct DockItemView: View {
             }
         }
         .frame(width: tileSize, height: tileSize)
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovered = hovering
-            }
-        }
         .overlay {
             RightClickHandler(
                 onRightClick: { handleRightClick() },
-                onLeftClick: { handleLeftClick() }
+                onLeftClick: { handleLeftClick() },
+                onHover: { hovering in
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        isHovered = hovering
+                    }
+                }
             )
         }
     }
@@ -115,22 +115,48 @@ struct DockItemView: View {
 struct RightClickHandler: NSViewRepresentable {
     let onRightClick: () -> Void
     let onLeftClick: () -> Void
+    let onHover: (Bool) -> Void
 
     func makeNSView(context: Context) -> RightClickView {
         let view = RightClickView()
         view.onRightClick = onRightClick
         view.onLeftClick = onLeftClick
+        view.onHover = onHover
         return view
     }
 
     func updateNSView(_ nsView: RightClickView, context: Context) {
         nsView.onRightClick = onRightClick
         nsView.onLeftClick = onLeftClick
+        nsView.onHover = onHover
     }
 
     class RightClickView: NSView {
         var onRightClick: (() -> Void)?
         var onLeftClick: (() -> Void)?
+        var onHover: ((Bool) -> Void)?
+        private var trackingArea: NSTrackingArea?
+
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            if let existing = trackingArea { removeTrackingArea(existing) }
+            let area = NSTrackingArea(
+                rect: bounds,
+                options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+                owner: self,
+                userInfo: nil
+            )
+            addTrackingArea(area)
+            trackingArea = area
+        }
+
+        override func mouseEntered(with event: NSEvent) {
+            onHover?(true)
+        }
+
+        override func mouseExited(with event: NSEvent) {
+            onHover?(false)
+        }
 
         override func mouseDown(with event: NSEvent) {
             onLeftClick?()
