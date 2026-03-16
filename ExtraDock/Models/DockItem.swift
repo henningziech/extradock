@@ -19,6 +19,7 @@ struct DockItem: Identifiable, Equatable {
     var path: String
     var icon: NSImage
     var isRunning: Bool
+    var badgeCount: String?
     var section: DockSection
 
     init(
@@ -28,6 +29,7 @@ struct DockItem: Identifiable, Equatable {
         path: String,
         icon: NSImage,
         isRunning: Bool = false,
+        badgeCount: String? = nil,
         section: DockSection
     ) {
         self.id = id
@@ -36,6 +38,7 @@ struct DockItem: Identifiable, Equatable {
         self.path = path
         self.icon = icon
         self.isRunning = isRunning
+        self.badgeCount = badgeCount
         self.section = section
     }
 
@@ -46,6 +49,7 @@ struct DockItem: Identifiable, Equatable {
         lhs.bundleIdentifier == rhs.bundleIdentifier &&
         lhs.path == rhs.path &&
         lhs.isRunning == rhs.isRunning &&
+        lhs.badgeCount == rhs.badgeCount &&
         lhs.section == rhs.section
     }
 }

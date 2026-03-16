@@ -40,4 +40,13 @@ class DockState {
             return updated
         }
     }
+
+    // Updates badge counts from a dictionary keyed by app name.
+    func updateBadges(_ badges: [String: String]) {
+        items = items.map { item in
+            var updated = item
+            updated.badgeCount = badges[item.name]
+            return updated
+        }
+    }
 }

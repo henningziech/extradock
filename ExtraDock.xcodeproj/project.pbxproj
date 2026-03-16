@@ -19,6 +19,7 @@
 		AA00000A000000000000001A /* DockSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000A00000000000000FA /* DockSeparatorView.swift */; };
 		AA00000B000000000000001A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000B00000000000000FA /* SettingsView.swift */; };
 		AA00000C000000000000001A /* MirrorDockPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000C00000000000000FA /* MirrorDockPanel.swift */; };
+		AA00000D000000000000001A /* BadgeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000F00000000000000FA /* BadgeReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		AA00000B00000000000000FA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AA00000C00000000000000FA /* MirrorDockPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorDockPanel.swift; sourceTree = "<group>"; };
 		AA00000D00000000000000FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA00000F00000000000000FA /* BadgeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeReader.swift; sourceTree = "<group>"; };
 		AA00000E00000000000000FA /* ExtraDock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExtraDock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -86,6 +88,7 @@
 				AA00000500000000000000FA /* RunningAppsMonitor.swift */,
 				AA00000600000000000000FA /* PlistFileWatcher.swift */,
 				AA00000700000000000000FA /* ScreenMonitor.swift */,
+				AA00000F00000000000000FA /* BadgeReader.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				AA00000A000000000000001A /* DockSeparatorView.swift in Sources */,
 				AA00000B000000000000001A /* SettingsView.swift in Sources */,
 				AA00000C000000000000001A /* MirrorDockPanel.swift in Sources */,
+				AA00000D000000000000001A /* BadgeReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

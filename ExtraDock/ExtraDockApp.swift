@@ -35,6 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var screenMonitor: ScreenMonitor!
     var plistWatcher: PlistFileWatcher!
     var runningAppsMonitor: RunningAppsMonitor!
+    var badgeReader: BadgeReader!
     private var settingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -68,6 +69,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Apply initial running state
         dockState.updateRunningApps(runningAppsMonitor.runningBundleIDs)
+
+        // Set up badge reader (Accessibility API)
+        badgeReader = BadgeReader()
+        badgeReader.onChange = { [weak self] badges in
+            self?.dockState.updateBadges(badges)
+        }
+        // Request accessibility permission if not already granted
+        if !badgeReader.isAccessibilityGranted {
+            badgeReader.requestPermission()
+        }
     }
 
     func reloadDock() {
