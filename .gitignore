@@ -16,3 +16,6 @@ Packages/
 
 # Plans
 docs/plans/
+
+# Debug
+debug.log

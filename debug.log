@@ -1,4 +1,0 @@
-dockScreenID (screens[0]): 1
-enabledScreens stored: ["4": 0]
-Screen 0: Built-in Retina Display, displayID=1, enabled=true, frame=(0.0, 0.0, 1728.0, 1117.0)
-Screen 1: DELL S2721DS, displayID=4, enabled=false, frame=(1728.0, 390.0, 2560.0, 1440.0)
