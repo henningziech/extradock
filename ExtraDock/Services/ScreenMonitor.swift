@@ -7,9 +7,26 @@ class ScreenMonitor {
     var panels: [CGDirectDisplayID: MirrorDockPanel] = [:]
     var dockState: DockState
 
-    private var enabledScreens: [String: Bool] {
-        get { UserDefaults.standard.dictionary(forKey: "enabledScreens") as? [String: Bool] ?? [:] }
-        set { UserDefaults.standard.set(newValue, forKey: "enabledScreens") }
+    private func readEnabledScreen(_ key: String) -> Bool? {
+        guard let dict = UserDefaults.standard.dictionary(forKey: "enabledScreens"),
+              let value = dict[key] else { return nil }
+        // Handle NSNumber (stored as 0/1) and Bool
+        return (value as? NSNumber)?.boolValue
+    }
+
+    private func writeEnabledScreens(_ screens: [String: Bool]) {
+        UserDefaults.standard.set(screens, forKey: "enabledScreens")
+    }
+
+    private var allEnabledScreens: [String: Bool] {
+        guard let dict = UserDefaults.standard.dictionary(forKey: "enabledScreens") else { return [:] }
+        var result: [String: Bool] = [:]
+        for (key, value) in dict {
+            if let num = value as? NSNumber {
+                result[key] = num.boolValue
+            }
+        }
+        return result
     }
 
     init(dockState: DockState) {
@@ -74,20 +91,18 @@ class ScreenMonitor {
     }
 
     func isEnabled(_ displayID: CGDirectDisplayID) -> Bool {
-        let key = String(displayID)
-        if let stored = enabledScreens[key] {
+        if let stored = readEnabledScreen(String(displayID)) {
             return stored
         }
         // Default: enable all screens. The user can disable specific screens
         // (e.g. the one with the native Dock) via Settings.
-        // Auto-detection of the Dock screen is unreliable across setups.
         return true
     }
 
     func setEnabled(_ displayID: CGDirectDisplayID, enabled: Bool) {
-        var current = enabledScreens
+        var current = allEnabledScreens
         current[String(displayID)] = enabled
-        enabledScreens = current
+        writeEnabledScreens(current)
         refreshPanels()
     }
 
