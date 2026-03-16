@@ -69,7 +69,7 @@ class MirrorDockPanel: NSPanel {
 
         let tileSize = dockState.tileSize
         let itemCount = CGFloat(dockState.items.count)
-        let separatorCount: CGFloat = 2 // between pinned apps, recent apps, and others
+        let separatorCount: CGFloat = 2
         let padding: CGFloat = 16
         let separatorWidth: CGFloat = 12
 
@@ -78,7 +78,7 @@ class MirrorDockPanel: NSPanel {
 
         let screenFrame = targetScreen.visibleFrame
         let x = screenFrame.origin.x + (screenFrame.width - width) / 2
-        let y = screenFrame.origin.y  // bottom of screen
+        let y = screenFrame.origin.y
 
         setFrame(NSRect(x: x, y: y, width: width, height: height), display: true)
     }
