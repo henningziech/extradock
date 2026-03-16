@@ -13,3 +13,6 @@ DerivedData/
 # Swift Package Manager
 .build/
 Packages/
+
+# Plans
+docs/plans/
