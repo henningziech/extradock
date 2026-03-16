@@ -1,11 +1,13 @@
 // ScreenMonitor.swift
 import AppKit
+import CoreGraphics
 import Observation
 
 @Observable
 class ScreenMonitor {
     var panels: [CGDirectDisplayID: MirrorDockPanel] = [:]
     var dockState: DockState
+    private var fullscreenCheckTimer: Timer?
 
     private func readEnabledScreen(_ key: String) -> Bool? {
         guard let dict = UserDefaults.standard.dictionary(forKey: "enabledScreens"),
@@ -37,11 +39,86 @@ class ScreenMonitor {
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
+        // Also observe active app changes to detect fullscreen
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(activeAppChanged),
+            name: NSWorkspace.didActivateApplicationNotification,
+            object: nil
+        )
         refreshPanels()
+        startFullscreenCheck()
     }
 
     @objc private func screensChanged() {
         refreshPanels()
+    }
+
+    @objc private func activeAppChanged() {
+        checkFullscreen()
+    }
+
+    private func startFullscreenCheck() {
+        // Poll every 1s to catch fullscreen transitions (YouTube, etc.)
+        fullscreenCheckTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.checkFullscreen()
+        }
+    }
+
+    private func checkFullscreen() {
+        for (displayID, panel) in panels {
+            guard let screen = NSScreen.screens.first(where: { ScreenMonitor.displayID(for: $0) == displayID }) else { continue }
+
+            if isScreenOccludedByFullscreenWindow(screen) {
+                if panel.isVisible {
+                    panel.orderOut(nil)
+                }
+            } else {
+                if !panel.isVisible {
+                    panel.orderFront(nil)
+                }
+            }
+        }
+    }
+
+    /// Check if any window covers the entire screen (fullscreen or maximized covering dock area)
+    private func isScreenOccludedByFullscreenWindow(_ screen: NSScreen) -> Bool {
+        let screenFrame = screen.frame
+
+        // Get all on-screen windows (excluding our own and desktop elements)
+        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else {
+            return false
+        }
+
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+
+        for windowInfo in windowList {
+            // Skip our own windows
+            guard let pid = windowInfo[kCGWindowOwnerPID as String] as? pid_t, pid != ownPID else { continue }
+
+            // Skip windows below normal level (desktop, etc.)
+            guard let layer = windowInfo[kCGWindowLayer as String] as? Int, layer == 0 else { continue }
+
+            // Get window bounds
+            guard let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: CGFloat],
+                  let wx = boundsDict["X"], let wy = boundsDict["Y"],
+                  let ww = boundsDict["Width"], let wh = boundsDict["Height"] else { continue }
+
+            // CGWindowList uses top-left origin; NSScreen uses bottom-left
+            // Convert: screen top-left Y = mainScreenHeight - screen.frame.maxY
+            let mainScreenHeight = NSScreen.screens.first?.frame.height ?? 0
+            let screenTopLeftY = mainScreenHeight - screenFrame.maxY
+
+            // Check if this window covers the full screen (with small tolerance)
+            let tolerance: CGFloat = 2
+            if wx <= screenFrame.origin.x + tolerance &&
+               wy <= screenTopLeftY + tolerance &&
+               ww >= screenFrame.width - tolerance &&
+               wh >= screenFrame.height - tolerance {
+                return true
+            }
+        }
+        return false
     }
 
     func refreshPanels() {
