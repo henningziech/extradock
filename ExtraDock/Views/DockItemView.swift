@@ -62,11 +62,17 @@ struct DockItemView: View {
     }
 
     private func handleRightClick() {
-        // For apps: trigger the native Dock's context menu via Accessibility
         if item.bundleIdentifier != nil {
-            DockMenuProxy.showNativeDockMenu(forAppNamed: item.name)
+            // Build native dock menu and show it at click position
+            if let menu = DockMenuProxy.buildNativeMenu(forAppNamed: item.name) {
+                let mouseLocation = NSEvent.mouseLocation
+                // Find the window at the mouse position to show menu in
+                if let window = NSApp.windows.first(where: { $0.frame.contains(mouseLocation) }) {
+                    let localPoint = window.convertPoint(fromScreen: mouseLocation)
+                    menu.popUp(positioning: nil, at: localPoint, in: window.contentView)
+                }
+            }
         } else {
-            // For folders: open in Finder
             NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: item.path)])
         }
     }
