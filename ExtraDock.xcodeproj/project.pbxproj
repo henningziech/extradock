@@ -1,0 +1,298 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000001000000000000001A /* ExtraDockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000100000000000000FA /* ExtraDockApp.swift */; };
+		AA000002000000000000001A /* DockItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000200000000000000FA /* DockItem.swift */; };
+		AA000003000000000000001A /* DockState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000300000000000000FA /* DockState.swift */; };
+		AA000004000000000000001A /* DockConfigReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000400000000000000FA /* DockConfigReader.swift */; };
+		AA000005000000000000001A /* RunningAppsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000500000000000000FA /* RunningAppsMonitor.swift */; };
+		AA000006000000000000001A /* PlistFileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000600000000000000FA /* PlistFileWatcher.swift */; };
+		AA000007000000000000001A /* ScreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000700000000000000FA /* ScreenMonitor.swift */; };
+		AA000008000000000000001A /* DockBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000800000000000000FA /* DockBarView.swift */; };
+		AA000009000000000000001A /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000900000000000000FA /* DockItemView.swift */; };
+		AA00000A000000000000001A /* DockSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000A00000000000000FA /* DockSeparatorView.swift */; };
+		AA00000B000000000000001A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000B00000000000000FA /* SettingsView.swift */; };
+		AA00000C000000000000001A /* MirrorDockPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000C00000000000000FA /* MirrorDockPanel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA00000100000000000000FA /* ExtraDockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraDockApp.swift; sourceTree = "<group>"; };
+		AA00000200000000000000FA /* DockItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockItem.swift; sourceTree = "<group>"; };
+		AA00000300000000000000FA /* DockState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockState.swift; sourceTree = "<group>"; };
+		AA00000400000000000000FA /* DockConfigReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockConfigReader.swift; sourceTree = "<group>"; };
+		AA00000500000000000000FA /* RunningAppsMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningAppsMonitor.swift; sourceTree = "<group>"; };
+		AA00000600000000000000FA /* PlistFileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlistFileWatcher.swift; sourceTree = "<group>"; };
+		AA00000700000000000000FA /* ScreenMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenMonitor.swift; sourceTree = "<group>"; };
+		AA00000800000000000000FA /* DockBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockBarView.swift; sourceTree = "<group>"; };
+		AA00000900000000000000FA /* DockItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockItemView.swift; sourceTree = "<group>"; };
+		AA00000A00000000000000FA /* DockSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockSeparatorView.swift; sourceTree = "<group>"; };
+		AA00000B00000000000000FA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AA00000C00000000000000FA /* MirrorDockPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorDockPanel.swift; sourceTree = "<group>"; };
+		AA00000D00000000000000FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA00000E00000000000000FA /* ExtraDock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExtraDock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA0000000000000000000FBP /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA00000000000000000000AA /* = root = */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000000AB /* ExtraDock */,
+				AA00000000000000000000AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AB /* ExtraDock */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000100000000000000FA /* ExtraDockApp.swift */,
+				AA00000D00000000000000FA /* Info.plist */,
+				AA00000000000000000000AC /* Models */,
+				AA00000000000000000000AD /* Services */,
+				AA00000000000000000000AE /* Views */,
+				AA00000000000000000000AG /* Windows */,
+			);
+			path = ExtraDock;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000200000000000000FA /* DockItem.swift */,
+				AA00000300000000000000FA /* DockState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AD /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000400000000000000FA /* DockConfigReader.swift */,
+				AA00000500000000000000FA /* RunningAppsMonitor.swift */,
+				AA00000600000000000000FA /* PlistFileWatcher.swift */,
+				AA00000700000000000000FA /* ScreenMonitor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000800000000000000FA /* DockBarView.swift */,
+				AA00000900000000000000FA /* DockItemView.swift */,
+				AA00000A00000000000000FA /* DockSeparatorView.swift */,
+				AA00000B00000000000000FA /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AG /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000C00000000000000FA /* MirrorDockPanel.swift */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000E00000000000000FA /* ExtraDock.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA000000000000000000000T /* ExtraDock */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000000000000000000CL02 /* Build configuration list for PBXNativeTarget "ExtraDock" */;
+			buildPhases = (
+				AA0000000000000000000SBP /* Sources */,
+				AA0000000000000000000FBP /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ExtraDock;
+			productName = ExtraDock;
+			productReference = AA00000E00000000000000FA /* ExtraDock.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000000000000000000000P /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = AA000000000000000000CL01 /* Build configuration list for PBXProject "ExtraDock" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA00000000000000000000AA /* = root = */;
+			productRefGroup = AA00000000000000000000AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA000000000000000000000T /* ExtraDock */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000SBP /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000001A /* ExtraDockApp.swift in Sources */,
+				AA000002000000000000001A /* DockItem.swift in Sources */,
+				AA000003000000000000001A /* DockState.swift in Sources */,
+				AA000004000000000000001A /* DockConfigReader.swift in Sources */,
+				AA000005000000000000001A /* RunningAppsMonitor.swift in Sources */,
+				AA000006000000000000001A /* PlistFileWatcher.swift in Sources */,
+				AA000007000000000000001A /* ScreenMonitor.swift in Sources */,
+				AA000008000000000000001A /* DockBarView.swift in Sources */,
+				AA000009000000000000001A /* DockItemView.swift in Sources */,
+				AA00000A000000000000001A /* DockSeparatorView.swift in Sources */,
+				AA00000B000000000000001A /* SettingsView.swift in Sources */,
+				AA00000C000000000000001A /* MirrorDockPanel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA00000000000000000BC01D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA00000000000000000BC01R /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AA00000000000000000BC02D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ExtraDock/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.henningziech.ExtraDock;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AA00000000000000000BC02R /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ExtraDock/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.henningziech.ExtraDock;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000000000000000000CL01 /* Build configuration list for PBXProject "ExtraDock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA00000000000000000BC01D /* Debug */,
+				AA00000000000000000BC01R /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000000000000000000CL02 /* Build configuration list for PBXNativeTarget "ExtraDock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA00000000000000000BC02D /* Debug */,
+				AA00000000000000000BC02R /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA000000000000000000000P /* Project object */;
+}
