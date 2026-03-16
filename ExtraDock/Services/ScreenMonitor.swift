@@ -99,22 +99,24 @@ class ScreenMonitor {
             // Skip windows below normal level (desktop, etc.)
             guard let layer = windowInfo[kCGWindowLayer as String] as? Int, layer == 0 else { continue }
 
-            // Get window bounds
-            guard let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: CGFloat],
-                  let wx = boundsDict["X"], let wy = boundsDict["Y"],
-                  let ww = boundsDict["Width"], let wh = boundsDict["Height"] else { continue }
+            // Get window bounds (values are NSNumber, not CGFloat)
+            guard let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: Any],
+                  let wx = (boundsDict["X"] as? NSNumber)?.doubleValue,
+                  let wy = (boundsDict["Y"] as? NSNumber)?.doubleValue,
+                  let ww = (boundsDict["Width"] as? NSNumber)?.doubleValue,
+                  let wh = (boundsDict["Height"] as? NSNumber)?.doubleValue else { continue }
 
             // CGWindowList uses top-left origin; NSScreen uses bottom-left
             // Convert: screen top-left Y = mainScreenHeight - screen.frame.maxY
             let mainScreenHeight = NSScreen.screens.first?.frame.height ?? 0
-            let screenTopLeftY = mainScreenHeight - screenFrame.maxY
+            let screenTopLeftY = Double(mainScreenHeight - screenFrame.maxY)
 
             // Check if this window covers the full screen (with small tolerance)
-            let tolerance: CGFloat = 2
-            if wx <= screenFrame.origin.x + tolerance &&
+            let tolerance: Double = 4
+            if wx <= Double(screenFrame.origin.x) + tolerance &&
                wy <= screenTopLeftY + tolerance &&
-               ww >= screenFrame.width - tolerance &&
-               wh >= screenFrame.height - tolerance {
+               ww >= Double(screenFrame.width) - tolerance &&
+               wh >= Double(screenFrame.height) - tolerance {
                 return true
             }
         }
