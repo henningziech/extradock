@@ -65,9 +65,11 @@ class ScreenMonitor {
         if let stored = enabledScreens[key] {
             return stored
         }
-        // Default: enable all screens except the one with the native Dock (NSScreen.main)
-        let mainID = NSScreen.main.flatMap { ScreenMonitor.displayID(for: $0) }
-        return displayID != mainID
+        // Default: enable all screens except the one with the native Dock.
+        // NSScreen.screens[0] is always the screen with the menu bar/Dock.
+        // (NSScreen.main is just the focused screen, which is unreliable.)
+        let dockScreenID = NSScreen.screens.first.flatMap { ScreenMonitor.displayID(for: $0) }
+        return displayID != dockScreenID
     }
 
     func setEnabled(_ displayID: CGDirectDisplayID, enabled: Bool) {
