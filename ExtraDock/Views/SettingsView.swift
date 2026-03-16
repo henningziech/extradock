@@ -11,6 +11,8 @@ struct SettingsView: View {
     var screenMonitor: ScreenMonitor
     @State private var tileSizeOverride: Double? = UserDefaults.standard.object(forKey: "tileSizeOverride") as? Double
     @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
+    @State private var autoHideEnabled: Bool = UserDefaults.standard.bool(forKey: "autoHideEnabled")
+    @State private var autoHideSeconds: Double = (UserDefaults.standard.object(forKey: "autoHideSeconds") as? Double) ?? 5.0
 
     private var screenEntries: [ScreenEntry] {
         NSScreen.screens.compactMap { screen in
@@ -58,6 +60,24 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Behavior") {
+                Toggle("Hide dock after inactivity", isOn: $autoHideEnabled)
+                    .onChange(of: autoHideEnabled) { _, newValue in
+                        UserDefaults.standard.set(newValue, forKey: "autoHideEnabled")
+                        NotificationCenter.default.post(name: .extraDockAutoHideChanged, object: nil)
+                    }
+
+                if autoHideEnabled {
+                    Slider(value: $autoHideSeconds, in: 1...30, step: 1) {
+                        Text("Hide after \(Int(autoHideSeconds))s")
+                    }
+                    .onChange(of: autoHideSeconds) { _, newValue in
+                        UserDefaults.standard.set(newValue, forKey: "autoHideSeconds")
+                        NotificationCenter.default.post(name: .extraDockAutoHideChanged, object: nil)
+                    }
+                }
+            }
+
             Section("General") {
                 Toggle("Launch at login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, newValue in
@@ -68,13 +88,13 @@ struct SettingsView: View {
                                 try SMAppService.mainApp.unregister()
                             }
                         } catch {
-                            launchAtLogin = !newValue // revert on failure
+                            launchAtLogin = !newValue
                         }
                     }
             }
         }
         .formStyle(.grouped)
-        .frame(width: 400, height: 350)
+        .frame(width: 400, height: 420)
         .padding()
     }
 
@@ -85,4 +105,8 @@ struct SettingsView: View {
         }
         return name
     }
+}
+
+extension Notification.Name {
+    static let extraDockAutoHideChanged = Notification.Name("extraDockAutoHideChanged")
 }

@@ -10,7 +10,16 @@ class MirrorDockPanel: NSPanel {
     private var hideTimer: Timer?
     private var idleTimer: Timer?
     private var mouseMonitor: Any?
+    private var settingsObserver: Any?
     private var targetScreen: NSScreen?
+
+    private var autoHideEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "autoHideEnabled")
+    }
+    private var autoHideSeconds: TimeInterval {
+        let val = UserDefaults.standard.double(forKey: "autoHideSeconds")
+        return val > 0 ? val : 5.0
+    }
 
     convenience init(screen: NSScreen, dockState: DockState) {
         self.init(
@@ -68,9 +77,17 @@ class MirrorDockPanel: NSPanel {
         self.hostingView = hosting
 
         updatePosition(for: screen)
-        setupTriggerZone(for: screen)
         setupPanelTracking()
-        startIdleMonitor()
+        if autoHideEnabled {
+            setupTriggerZone(for: screen)
+            startIdleMonitor()
+        }
+        // Listen for settings changes
+        settingsObserver = NotificationCenter.default.addObserver(
+            forName: .extraDockAutoHideChanged, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.autoHideSettingChanged()
+        }
         orderFront(nil)
     }
 
@@ -104,11 +121,36 @@ class MirrorDockPanel: NSPanel {
         setupTriggerZone(for: resolvedScreen)
     }
 
-    // MARK: - Idle detection (hide after 5s of no mouse movement)
+    // MARK: - Auto-hide
+
+    private func autoHideSettingChanged() {
+        if autoHideEnabled {
+            if mouseMonitor == nil {
+                startIdleMonitor()
+            }
+            if let screen = targetScreen {
+                setupTriggerZone(for: screen)
+            }
+            resetIdleTimer()
+        } else {
+            // Disable auto-hide: stop monitors, show panel, remove trigger
+            idleTimer?.invalidate()
+            idleTimer = nil
+            if let monitor = mouseMonitor {
+                NSEvent.removeMonitor(monitor)
+                mouseMonitor = nil
+            }
+            triggerPanel?.close()
+            triggerPanel = nil
+            if !isShown {
+                showPanel()
+            }
+        }
+    }
 
     private func startIdleMonitor() {
         resetIdleTimer()
-        // Global mouse-moved monitor to detect any movement
+        guard mouseMonitor == nil else { return }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged]) { [weak self] _ in
             self?.onMouseActivity()
         }
@@ -134,8 +176,8 @@ class MirrorDockPanel: NSPanel {
 
     private func resetIdleTimer() {
         idleTimer?.invalidate()
-        idleTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
-            // Mouse idle for 5s — hide if mouse is not over the panel
+        guard autoHideEnabled else { return }
+        idleTimer = Timer.scheduledTimer(withTimeInterval: autoHideSeconds, repeats: false) { [weak self] _ in
             guard let self, self.isShown else { return }
             let mouseLocation = NSEvent.mouseLocation
             if !self.frame.contains(mouseLocation) {
@@ -191,12 +233,8 @@ class MirrorDockPanel: NSPanel {
 
         guard let screen = targetScreen else { return }
         let screenFrame = screen.visibleFrame
-
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.2
-            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            self.animator().setFrameOrigin(NSPoint(x: self.frame.origin.x, y: screenFrame.origin.y))
-        }
+        self.setFrameOrigin(NSPoint(x: self.frame.origin.x, y: screenFrame.origin.y))
+        self.orderFront(nil)
     }
 
     private func hidePanel() {
@@ -205,12 +243,7 @@ class MirrorDockPanel: NSPanel {
 
         guard let screen = targetScreen else { return }
         let belowScreen = screen.frame.origin.y - self.frame.height + 2
-
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.3
-            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            self.animator().setFrameOrigin(NSPoint(x: self.frame.origin.x, y: belowScreen))
-        }
+        self.setFrameOrigin(NSPoint(x: self.frame.origin.x, y: belowScreen))
     }
 
     // MARK: - Mouse tracking on the panel itself
@@ -251,6 +284,10 @@ class MirrorDockPanel: NSPanel {
         if let monitor = mouseMonitor {
             NSEvent.removeMonitor(monitor)
             mouseMonitor = nil
+        }
+        if let observer = settingsObserver {
+            NotificationCenter.default.removeObserver(observer)
+            settingsObserver = nil
         }
         super.close()
     }
