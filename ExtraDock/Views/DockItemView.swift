@@ -39,14 +39,11 @@ struct DockItemView: View {
         .onHover { hovering in
             isHovered = hovering
         }
-        .onTapGesture {
-            handleClick()
-        }
         .overlay {
-            // Invisible right-click handler using NSView representable
-            RightClickHandler {
-                handleRightClick()
-            }
+            RightClickHandler(
+                onRightClick: { handleRightClick() },
+                onLeftClick: { handleClick() }
+            )
         }
     }
 
@@ -80,30 +77,38 @@ struct DockItemView: View {
 
 // MARK: - RightClickHandler
 
-/// NSView-based right-click interceptor for SwiftUI
+/// NSView-based right-click interceptor for SwiftUI.
+/// Passes through all events except right-click.
 struct RightClickHandler: NSViewRepresentable {
-    let action: () -> Void
+    let onRightClick: () -> Void
+    let onLeftClick: () -> Void
 
     func makeNSView(context: Context) -> RightClickView {
         let view = RightClickView()
-        view.action = action
+        view.onRightClick = onRightClick
+        view.onLeftClick = onLeftClick
         return view
     }
 
     func updateNSView(_ nsView: RightClickView, context: Context) {
-        nsView.action = action
+        nsView.onRightClick = onRightClick
+        nsView.onLeftClick = onLeftClick
     }
 
     class RightClickView: NSView {
-        var action: (() -> Void)?
+        var onRightClick: (() -> Void)?
+        var onLeftClick: (() -> Void)?
+
+        override func mouseDown(with event: NSEvent) {
+            onLeftClick?()
+        }
 
         override func rightMouseDown(with event: NSEvent) {
-            action?()
+            onRightClick?()
         }
 
         override func menu(for event: NSEvent) -> NSMenu? {
-            // Prevent default context menu
-            return nil
+            nil
         }
     }
 }
