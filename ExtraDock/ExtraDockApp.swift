@@ -76,13 +76,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self?.dockState.updateBadges(badges)
         }
         badgeReader.start()
-
-        // Prefetch dock context menus in background after 3s
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            guard let self else { return }
-            let appNames = self.dockState.items.compactMap { $0.bundleIdentifier != nil ? $0.name : nil }
-            DockMenuProxy.shared.prefetchMenus(forAppNames: appNames)
-        }
     }
 
     func reloadDock() {
