@@ -9,24 +9,7 @@ struct DockItemView: View {
     @State private var isPressed = false
 
     var body: some View {
-        ZStack(alignment: .top) {
-            // Tooltip above icon
-            if isHovered {
-                Text(item.name)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.black.opacity(0.75))
-                    )
-                    .offset(y: -24)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-                    .zIndex(1)
-            }
-
-            VStack(spacing: 2) {
+        VStack(spacing: 2) {
                 ZStack(alignment: .topTrailing) {
                     Image(nsImage: item.icon)
                         .resizable()
@@ -55,9 +38,9 @@ struct DockItemView: View {
                     .fill(Color.white)
                     .frame(width: 4, height: 4)
                     .opacity(item.isRunning ? 1 : 0)
-            }
         }
         .frame(width: tileSize, height: tileSize)
+        .help(item.name)
         .overlay {
             RightClickHandler(
                 onRightClick: { handleRightClick() },
