@@ -3,15 +3,10 @@ import SwiftUI
 struct DockBarView: View {
     var dockState: DockState
 
-    private var scaledTileSize: CGFloat {
-        let scale = CGFloat(UserDefaults.standard.object(forKey: "dockScale") as? Double ?? 1.0)
-        return dockState.tileSize * scale
-    }
-
     var body: some View {
         HStack(spacing: 0) {
             let grouped = groupedItems()
-            let size = scaledTileSize
+            let size = dockState.scaledTileSize
 
             if !grouped.pinned.isEmpty {
                 ForEach(grouped.pinned) { item in

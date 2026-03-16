@@ -9,6 +9,9 @@ class DockState {
     var items: [DockItem] = []
     var tileSize: CGFloat = 49
     var orientation: String = "bottom"
+    var scale: CGFloat = CGFloat(UserDefaults.standard.object(forKey: "dockScale") as? Double ?? 1.0)
+
+    var scaledTileSize: CGFloat { tileSize * scale }
 
     // Merges new config items with current running state.
     // Items already present (by id) retain their isRunning flag;
