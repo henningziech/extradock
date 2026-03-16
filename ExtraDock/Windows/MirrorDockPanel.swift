@@ -16,7 +16,7 @@ class MirrorDockPanel: NSPanel {
 
         // Panel configuration
         self.level = .floating
-        self.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
+        self.collectionBehavior = [.canJoinAllSpaces, .stationary]
         self.backgroundColor = .clear
         self.isOpaque = false
         self.hasShadow = true
